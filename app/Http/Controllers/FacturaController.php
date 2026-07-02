@@ -3,9 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Factura;
 
 class FacturaController extends Controller
 {
+    public function search(Request $request)
+    {
+        $facturas = Factura::where('UUID','like','%'.$request->query('UUID'))->get();
+        return response()->json($facturas);
+    }
+
     /**
      * Display a listing of the resource.
      */

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\PolizaFactura;
+use App\Models\Validacion;
+use Illuminate\Support\Facades\DB;
 
 class ValidacionController extends Controller
 {
@@ -30,6 +33,30 @@ class ValidacionController extends Controller
     public function store(Request $request)
     {
         //
+        //
+        $poliza = $request->all();
+        $facturas = $poliza['facturas'];
+        unset($poliza['facturas']);
+        try{
+            DB::beginTransaction();
+            PolizaFactura::where('poliza', $poliza['poliza_gasto'])->delete();
+            foreach ($facturas as $factura) {
+                PolizaFactura::create([
+                    'uuid' => $factura['UUID'],
+                    'total'=> $factura['Total'],
+                    'poliza' => $poliza['poliza_gasto'],
+                ]);
+                // actualiza el estatus de la validacion de la poliza
+            }
+            Validacion::updateOrCreate(
+                ['poliza' => $poliza['poliza_gasto']],
+                ['status' => $poliza['status']]
+            );
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     /**

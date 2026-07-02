@@ -3,9 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Poliza;
 
 class PolizaController extends Controller
 {
+    /**
+     * Display the specified resource.
+     */
+    public function search(Request $request)
+    {
+        $polizas = Poliza::where('poliza_gasto',$request->query('poliza'))->get();
+        return response()->json($polizas);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -27,7 +37,7 @@ class PolizaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
     }
 
     /**
@@ -35,7 +45,8 @@ class PolizaController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $poliza = Poliza::findOrFail($id);
+        return response()->json($poliza);
     }
 
     /**
