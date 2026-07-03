@@ -12,6 +12,7 @@ class Poliza extends Model
     protected $table = 'polizas';
     protected $primaryKey = 'poliza_gasto';
     public $incrementing = false;
+    public $timestamps = false;
     protected $keyType = 'string';
 
     protected $with = ['recibos'];
@@ -50,4 +51,14 @@ class Poliza extends Model
             'Importe_gasto' => 'float',
         ];
     }
+
+    protected $fillable = [
+        'poliza_pago',
+        'fecha_poliza_pago',
+        'institucion_bancaria',
+        'numero_cuenta',
+        'referencia',
+        'fecha_transferencia',
+        'importe_pago',
+    ];
 }

@@ -15,4 +15,9 @@ class Validacion extends Model
         'poliza',
         'status',
     ];
+
+    public  function getFechaValidacionAttribute() {
+        $this->created_at = \Carbon\Carbon::parse($this->created_at)->format('d-m-Y');
+
+    }
 }

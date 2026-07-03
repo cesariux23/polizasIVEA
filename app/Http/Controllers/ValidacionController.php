@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\PolizaFactura;
+use App\Models\Poliza;
 use App\Models\Validacion;
 use App\Models\Recibo;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,11 @@ class ValidacionController extends Controller
     public function index()
     {
         //
-        return Inertia::render('Validacion');
+        $validaciones = [
+            'Fecha' => Validacion::select(DB::raw('count(status) as total, Date(created_at) as date'))->groupBy('date')->get(),
+            'Status' => Validacion::select(DB::raw('count(status) as total, status'))->groupBy('status')->get(),
+        ];
+        return response()->json($validaciones);
     }
 
     /**
@@ -59,6 +64,18 @@ class ValidacionController extends Controller
                 ['poliza' => $poliza['poliza_gasto']],
                 ['status' => $poliza['status']]
             );
+            // actualiza los valores de las polizas
+            $poliza_actual = Poliza::find($poliza['poliza_gasto']);
+            $poliza_actual
+            ->update([
+                'poliza_pago' => $poliza['poliza_pago'],
+                'fecha_poliza_pago' =>  $poliza['fecha_poliza_pago'],
+                'institucion_bancaria'=>  $poliza['institucion_bancaria'],
+                'numero_cuenta'=>  $poliza['numero_cuenta'],
+                'referencia'=>  $poliza['referencia'],
+                'fecha_transferencia'=>  $poliza['fecha_transferencia'],
+                'importe_pago'=>  $poliza['importe_pago'],
+            ]);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
