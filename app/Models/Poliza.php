@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Poliza extends Model
@@ -17,9 +17,11 @@ class Poliza extends Model
     protected $with = ['facturas'];
     protected $appends = ['status'];
 
-     public function facturas(): HasManyThrough
+    public function facturas(): HasMany
     {
-        return $this->hasManyThrough(Factura::class, PolizaFactura::class, 'poliza', 'UUID', 'poliza_gasto', 'uuid');
+        return $this->hasMany(PolizaFactura::class, 'poliza', 'poliza_gasto')
+            ->join('facturas', 'poliza_factura.uuid', '=', 'facturas.UUID')
+            ->select('poliza_factura.*', 'poliza_factura.Total', 'facturas.UUID', 'facturas.SubTotal','facturas.Fecha', 'facturas.NombreEmisor', 'facturas.RfcEmisor', 'facturas.Descripcion', 'facturas.TotalImpuestosTrasladados');
     }
 
     public function statusObj(): HasOne
