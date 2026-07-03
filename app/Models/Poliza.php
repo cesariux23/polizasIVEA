@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\DB;
 
 class Poliza extends Model
 {
@@ -22,11 +23,13 @@ class Poliza extends Model
     {
         return $this->hasMany(PolizaFactura::class, 'poliza', 'poliza_gasto')
             ->join('facturas', 'poliza_factura.uuid', '=', 'facturas.UUID')
-            ->select('poliza_factura.*', 'poliza_factura.Total', 'facturas.UUID', 'facturas.SubTotal','facturas.Fecha', 'facturas.NombreEmisor', 'facturas.RfcEmisor', 'facturas.Descripcion', 'facturas.TotalImpuestosTrasladados');
+            ->select('poliza_factura.*', 'poliza_factura.Total', 'facturas.UUID', 'facturas.SubTotal','facturas.Fecha', 'facturas.NombreEmisor', 'facturas.RfcEmisor', 'facturas.Descripcion', 'facturas.TotalImpuestosTrasladados', DB::raw("'Factura' as Tipo"));
     }
     public function recibos(): HasMany
     {
-        return $this->hasMany(Recibo::class, 'poliza', 'poliza_gasto');
+        return $this->hasMany(Recibo::class, 'poliza', 'poliza_gasto')
+        ->select('recibos.*', DB::raw("'Recibo' as Tipo"))
+        ;
     }
 
     public function getFacturasAttribute()
