@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\PolizaFactura;
 use App\Models\Validacion;
+use App\Models\Recibo;
 use Illuminate\Support\Facades\DB;
 
 class ValidacionController extends Controller
@@ -40,12 +41,18 @@ class ValidacionController extends Controller
         try{
             DB::beginTransaction();
             PolizaFactura::where('poliza', $poliza['poliza_gasto'])->delete();
+            Recibo::where('poliza', $poliza['poliza_gasto'])->delete();
             foreach ($facturas as $factura) {
-                PolizaFactura::create([
-                    'uuid' => $factura['UUID'],
-                    'total'=> $factura['Total'],
-                    'poliza' => $poliza['poliza_gasto'],
-                ]);
+                if($factura['Tipo'] == 'Factura'){
+                    PolizaFactura::create([
+                        'uuid' => $factura['UUID'],
+                        'total'=> $factura['Total'],
+                        'poliza' => $poliza['poliza_gasto'],
+                    ]);
+                }else{
+                    $recibo = array_merge($factura, ['poliza' => $poliza['poliza_gasto']]);
+                    Recibo::create(array_merge($factura, ['poliza' => $poliza['poliza_gasto']]));
+                }
                 // actualiza el estatus de la validacion de la poliza
             }
             Validacion::updateOrCreate(

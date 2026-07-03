@@ -20,4 +20,11 @@ class Factura extends Model
             'TotalImpuestoTrasladado' => 'float',
         ];
     }
+
+    public $appends = ['Tipo'];
+
+    public function getTipoAttribute()
+    {
+        return 'Factura';
+    }
 }

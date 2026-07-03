@@ -14,14 +14,23 @@ class Poliza extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    protected $with = ['facturas'];
-    protected $appends = ['status'];
+    protected $with = ['recibos'];
+    protected $appends = ['facturas', 'status'];
 
     public function facturas(): HasMany
     {
         return $this->hasMany(PolizaFactura::class, 'poliza', 'poliza_gasto')
             ->join('facturas', 'poliza_factura.uuid', '=', 'facturas.UUID')
             ->select('poliza_factura.*', 'poliza_factura.Total', 'facturas.UUID', 'facturas.SubTotal','facturas.Fecha', 'facturas.NombreEmisor', 'facturas.RfcEmisor', 'facturas.Descripcion', 'facturas.TotalImpuestosTrasladados');
+    }
+    public function recibos(): HasMany
+    {
+        return $this->hasMany(Recibo::class, 'poliza', 'poliza_gasto');
+    }
+
+    public function getFacturasAttribute()
+    {
+        return array_merge($this->facturas()->get()->toArray(), $this->recibos()->get()->toArray());
     }
 
     public function statusObj(): HasOne
