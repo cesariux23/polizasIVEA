@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Poliza;
+use App\Models\Validacion;
+use Illuminate\Support\Facades\DB;
 
 class PolizaController extends Controller
 {
@@ -21,7 +23,9 @@ class PolizaController extends Controller
      */
     public function index()
     {
-        //
+        //exportacion
+        $filas = Poliza::whereIn('poliza_gasto',Validacion::select('poliza')->get())->get();
+        return response()->json($filas);
     }
 
     /**

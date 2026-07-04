@@ -23,7 +23,7 @@ class Poliza extends Model
     {
         return $this->hasMany(PolizaFactura::class, 'poliza', 'poliza_gasto')
             ->join('facturas', 'poliza_factura.uuid', '=', 'facturas.UUID')
-            ->select('poliza_factura.*', 'poliza_factura.Total', 'facturas.UUID', 'facturas.SubTotal','facturas.Fecha', 'facturas.NombreEmisor', 'facturas.RfcEmisor', 'facturas.Descripcion', 'facturas.TotalImpuestosTrasladados', DB::raw("'Factura' as Tipo"));
+            ->select('poliza_factura.Total', 'facturas.UUID', 'facturas.Folio', 'facturas.SubTotal','facturas.Fecha', 'facturas.NombreEmisor', 'facturas.RfcEmisor', 'facturas.Descripcion', 'facturas.TotalImpuestosTrasladados', 'facturas.Total as Total_Original', DB::raw("'Factura' as Tipo"));
     }
     public function recibos(): HasMany
     {
