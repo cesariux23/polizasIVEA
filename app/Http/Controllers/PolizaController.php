@@ -14,7 +14,7 @@ class PolizaController extends Controller
      */
     public function search(Request $request)
     {
-        $polizas = Poliza::where('poliza_gasto',$request->query('poliza'))->get();
+        $polizas = Poliza::where('poliza_gasto',$request->query('poliza'))->limit(10)->get();
         return response()->json($polizas);
     }
 
